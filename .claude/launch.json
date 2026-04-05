@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "resume-buenturno",
+      "runtimeExecutable": "/opt/homebrew/bin/node",
+      "runtimeArgs": ["/Users/alexisromanmartinez/Desktop/Desarrollo/resume-buenturno/node_modules/.bin/next", "dev", "--port", "4000"],
+      "cwd": "/Users/alexisromanmartinez/Desktop/Desarrollo/resume-buenturno",
+      "port": 4000
+    }
+  ]
+}
