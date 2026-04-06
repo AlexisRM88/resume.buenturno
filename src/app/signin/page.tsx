@@ -6,49 +6,118 @@ import { useRouter } from "next/navigation";
 import { trackRoleSelected, trackEmailSubmit, trackLoginSuccess } from "@/lib/analytics";
 
 type Role = "talent" | "employer";
+type AuthMode = "login" | "register";
+type Screen = "role" | "auth" | "forgot" | "reset-code";
 
 export default function SignInPage() {
   const { signIn } = useAuthActions();
   const router = useRouter();
+
   const [role, setRole] = useState<Role | null>(null);
+  const [screen, setScreen] = useState<Screen>("role");
+  const [authMode, setAuthMode] = useState<AuthMode>("login");
+
   const [email, setEmail] = useState("");
-  const [step, setStep] = useState<"role" | "email" | "code">("role");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [resetCode, setResetCode] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [info, setInfo] = useState("");
 
   function handleRoleSelect(selected: Role) {
     setRole(selected);
-    setStep("email");
+    setScreen("auth");
     trackRoleSelected(selected);
   }
 
-  async function handleEmailSubmit(e: React.FormEvent) {
+  async function handleAuthSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setLoading(true);
     setError("");
+
+    if (authMode === "register" && password !== confirmPassword) {
+      setError("Las contraseñas no coinciden.");
+      return;
+    }
+    if (password.length < 8) {
+      setError("La contraseña debe tener al menos 8 caracteres.");
+      return;
+    }
+
+    setLoading(true);
     try {
-      await signIn("resend", { email });
-      setStep("code");
+      const flow = authMode === "register" ? "signUp" : "signIn";
+      await signIn("password", { email, password, flow });
       trackEmailSubmit(role!);
-    } catch {
-      setError("Error al enviar el código. Verifica el email.");
+      trackLoginSuccess(role!);
+      router.push(role === "employer" ? "/employers" : "/dashboard");
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      if (msg.includes("InvalidAccountId") || msg.includes("not found") || msg.includes("invalid")) {
+        setError(
+          authMode === "login"
+            ? "Email o contraseña incorrectos."
+            : "No se pudo crear la cuenta. Intenta de nuevo."
+        );
+      } else if (msg.includes("already exists") || msg.includes("AccountAlreadyExists")) {
+        setError("Ya existe una cuenta con ese email. Inicia sesión.");
+        setAuthMode("login");
+      } else {
+        setError("Ocurrió un error. Intenta de nuevo.");
+      }
     } finally {
       setLoading(false);
     }
   }
 
-  async function handleCodeSubmit(e: React.FormEvent) {
+  async function handleForgotSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const form = e.target as HTMLFormElement;
-    const code = (form.elements.namedItem("code") as HTMLInputElement).value;
-    setLoading(true);
     setError("");
+    setLoading(true);
     try {
-      await signIn("resend", { email, code });
-      trackLoginSuccess(role!);
-      router.push(role === "employer" ? "/employers" : "/dashboard");
+      await signIn("password", { email, flow: "reset" });
+      setInfo("Te enviamos un código a tu email.");
+      setScreen("reset-code");
     } catch {
-      setError("Código incorrecto. Intenta de nuevo.");
+      setError("No encontramos una cuenta con ese email.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleResetCodeSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+
+    if (newPassword !== confirmNewPassword) {
+      setError("Las contraseñas no coinciden.");
+      return;
+    }
+    if (newPassword.length < 8) {
+      setError("La contraseña debe tener al menos 8 caracteres.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await signIn("password", {
+        email,
+        code: resetCode,
+        newPassword,
+        flow: "reset-verification",
+      });
+      setInfo("Contraseña actualizada. Inicia sesión.");
+      setScreen("auth");
+      setAuthMode("login");
+      setPassword("");
+      setResetCode("");
+      setNewPassword("");
+      setConfirmNewPassword("");
+    } catch {
+      setError("Código incorrecto o expirado. Intenta de nuevo.");
     } finally {
       setLoading(false);
     }
@@ -65,18 +134,22 @@ export default function SignInPage() {
 
         <div className="bg-white rounded-2xl shadow-lg p-8">
 
+          {/* Error / Info banners */}
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg p-3 mb-4 text-sm">
               {error}
             </div>
           )}
+          {info && !error && (
+            <div className="bg-green-50 border border-green-200 text-green-700 rounded-lg p-3 mb-4 text-sm">
+              {info}
+            </div>
+          )}
 
-          {/* Step 1: Role selection */}
-          {step === "role" && (
+          {/* ── STEP 1: Role ── */}
+          {screen === "role" && (
             <>
-              <h2 className="text-xl font-semibold text-gray-800 mb-2 text-center">
-                ¿Quién eres?
-              </h2>
+              <h2 className="text-xl font-semibold text-gray-800 mb-2 text-center">¿Quién eres?</h2>
               <p className="text-sm text-gray-400 text-center mb-6">Selecciona para continuar</p>
               <div className="grid grid-cols-2 gap-4">
                 <button
@@ -103,72 +176,189 @@ export default function SignInPage() {
             </>
           )}
 
-          {/* Step 2: Email */}
-          {step === "email" && (
+          {/* ── STEP 2: Email + Password ── */}
+          {screen === "auth" && (
             <>
-              <div className="flex items-center gap-2 mb-6">
-                <button onClick={() => setStep("role")} className="text-gray-400 hover:text-gray-600">
+              {/* Back + tabs */}
+              <div className="flex items-center gap-2 mb-5">
+                <button onClick={() => { setScreen("role"); setError(""); setInfo(""); }} className="text-gray-400 hover:text-gray-600 text-lg">
                   ←
                 </button>
-                <h2 className="text-xl font-semibold text-gray-800">
-                  {role === "employer" ? "Acceso para patronos" : "Inicia sesión o regístrate"}
-                </h2>
+                <div className="flex flex-1 bg-gray-100 rounded-xl p-1">
+                  <button
+                    onClick={() => { setAuthMode("login"); setError(""); setInfo(""); }}
+                    className={`flex-1 py-2 rounded-lg text-sm font-semibold transition ${
+                      authMode === "login" ? "bg-white shadow text-indigo-700" : "text-gray-500"
+                    }`}
+                  >
+                    Iniciar sesión
+                  </button>
+                  <button
+                    onClick={() => { setAuthMode("register"); setError(""); setInfo(""); }}
+                    className={`flex-1 py-2 rounded-lg text-sm font-semibold transition ${
+                      authMode === "register" ? "bg-white shadow text-indigo-700" : "text-gray-500"
+                    }`}
+                  >
+                    Registrarme
+                  </button>
+                </div>
               </div>
-              <form onSubmit={handleEmailSubmit}>
-                <label className="block text-sm text-gray-600 mb-1.5 font-medium">Tu email</label>
-                <input
-                  type="email"
-                  required
-                  placeholder="tu@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-400 mb-4 text-base"
-                />
+
+              <form onSubmit={handleAuthSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-sm text-gray-600 mb-1 font-medium">Email</label>
+                  <input
+                    type="email"
+                    required
+                    placeholder="tu@email.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-400 text-base"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm text-gray-600 mb-1 font-medium">Contraseña</label>
+                  <input
+                    type="password"
+                    required
+                    placeholder={authMode === "register" ? "Mínimo 8 caracteres" : "Tu contraseña"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-400 text-base"
+                  />
+                </div>
+
+                {authMode === "register" && (
+                  <div>
+                    <label className="block text-sm text-gray-600 mb-1 font-medium">Confirmar contraseña</label>
+                    <input
+                      type="password"
+                      required
+                      placeholder="Repite tu contraseña"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      className="w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-400 text-base"
+                    />
+                  </div>
+                )}
+
                 <button
                   type="submit"
-                  disabled={loading || !email}
+                  disabled={loading}
                   className="w-full bg-indigo-600 text-white rounded-xl py-3 font-semibold hover:bg-indigo-700 transition disabled:opacity-50"
                 >
-                  {loading ? "Enviando..." : "Enviar código de acceso"}
+                  {loading
+                    ? "Procesando..."
+                    : authMode === "register"
+                    ? "Crear cuenta →"
+                    : "Entrar →"}
                 </button>
               </form>
-              <p className="text-xs text-gray-400 text-center mt-4">
-                Te enviamos un código de 6 dígitos — sin contraseña
-              </p>
+
+              {authMode === "login" && (
+                <button
+                  onClick={() => { setScreen("forgot"); setError(""); setInfo(""); }}
+                  className="w-full text-center text-sm text-indigo-500 hover:text-indigo-700 mt-4"
+                >
+                  ¿Olvidaste tu contraseña?
+                </button>
+              )}
             </>
           )}
 
-          {/* Step 3: Code */}
-          {step === "code" && (
-            <form onSubmit={handleCodeSubmit}>
-              <h2 className="text-xl font-semibold text-gray-800 mb-2 text-center">Revisa tu email</h2>
-              <p className="text-gray-500 text-sm mb-6 text-center">
-                Enviamos un código a <strong>{email}</strong>
+          {/* ── STEP 3a: Forgot password ── */}
+          {screen === "forgot" && (
+            <>
+              <div className="flex items-center gap-2 mb-5">
+                <button onClick={() => { setScreen("auth"); setError(""); setInfo(""); }} className="text-gray-400 hover:text-gray-600 text-lg">
+                  ←
+                </button>
+                <h2 className="text-lg font-semibold text-gray-800">Recuperar contraseña</h2>
+              </div>
+              <p className="text-sm text-gray-500 mb-5">
+                Ingresa tu email y te enviaremos un código para restablecer tu contraseña.
               </p>
-              <input
-                name="code"
-                type="text"
-                inputMode="numeric"
-                required
-                placeholder="000000"
-                className="w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-400 mb-4 text-center text-2xl tracking-widest"
-                maxLength={8}
-              />
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-indigo-600 text-white rounded-xl py-3 font-semibold hover:bg-indigo-700 transition disabled:opacity-50"
-              >
-                {loading ? "Verificando..." : "Entrar"}
-              </button>
-              <button
-                type="button"
-                onClick={() => setStep("email")}
-                className="w-full mt-3 text-gray-400 text-sm hover:text-gray-600"
-              >
-                Cambiar email
-              </button>
-            </form>
+              <form onSubmit={handleForgotSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-sm text-gray-600 mb-1 font-medium">Email</label>
+                  <input
+                    type="email"
+                    required
+                    placeholder="tu@email.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-400 text-base"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-indigo-600 text-white rounded-xl py-3 font-semibold hover:bg-indigo-700 transition disabled:opacity-50"
+                >
+                  {loading ? "Enviando..." : "Enviar código"}
+                </button>
+              </form>
+            </>
+          )}
+
+          {/* ── STEP 3b: Reset code + new password ── */}
+          {screen === "reset-code" && (
+            <>
+              <div className="flex items-center gap-2 mb-5">
+                <button onClick={() => { setScreen("forgot"); setError(""); setInfo(""); }} className="text-gray-400 hover:text-gray-600 text-lg">
+                  ←
+                </button>
+                <h2 className="text-lg font-semibold text-gray-800">Nueva contraseña</h2>
+              </div>
+              <p className="text-sm text-gray-500 mb-5">
+                Revisa tu email <strong>{email}</strong> e ingresa el código junto con tu nueva contraseña.
+              </p>
+              <form onSubmit={handleResetCodeSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-sm text-gray-600 mb-1 font-medium">Código de verificación</label>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    required
+                    placeholder="000000"
+                    value={resetCode}
+                    onChange={(e) => setResetCode(e.target.value)}
+                    className="w-full border border-gray-300 rounded-xl px-4 py-3 text-center text-2xl tracking-widest text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                    maxLength={8}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-600 mb-1 font-medium">Nueva contraseña</label>
+                  <input
+                    type="password"
+                    required
+                    placeholder="Mínimo 8 caracteres"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    className="w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-400 text-base"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-600 mb-1 font-medium">Confirmar contraseña</label>
+                  <input
+                    type="password"
+                    required
+                    placeholder="Repite tu contraseña"
+                    value={confirmNewPassword}
+                    onChange={(e) => setConfirmNewPassword(e.target.value)}
+                    className="w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-400 text-base"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-indigo-600 text-white rounded-xl py-3 font-semibold hover:bg-indigo-700 transition disabled:opacity-50"
+                >
+                  {loading ? "Guardando..." : "Cambiar contraseña"}
+                </button>
+              </form>
+            </>
           )}
         </div>
 

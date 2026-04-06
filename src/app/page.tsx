@@ -177,7 +177,7 @@ export default function LandingPage() {
       {/* ── AD BANNER ── */}
       <div className="border-y border-gray-200 py-2 px-6">
         <div className="max-w-4xl mx-auto">
-          <AdBanner slot="1234567890" format="horizontal" />
+          <AdBanner slot="8559499562" format="auto" />
         </div>
       </div>
 
