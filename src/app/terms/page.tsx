@@ -35,14 +35,29 @@ export default function TermsPage() {
         <div className="space-y-8 text-gray-700 leading-relaxed">
 
           <section>
-            <h2 className="text-xl font-semibold text-gray-900 mb-3">1. Aceptación de los Términos</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-3">1. Quiénes Somos</h2>
             <p>
-              Al crear una cuenta o usar los servicios de BuenTurno Resume ("el Servicio"), operado por BuenTurno LLC con sede en Puerto Rico, usted acepta estos Términos y Condiciones en su totalidad. Si no está de acuerdo, no use el Servicio.
+              BuenTurno Resume (<strong>resume.buenturno.com</strong>) es un proyecto de{" "}
+              <a href="https://cabuyacreativa.com" target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">CabuyaCreativa.com</a>,
+              agencia de soluciones digitales con base en Puerto Rico. BuenTurno.com y resume.buenturno.com son iniciativas propias de CabuyaCreativa.
+            </p>
+            <p className="mt-3">
+              Para comunicarse con el operador de este servicio:{" "}
+              <a href="mailto:cabuyacreativa@gmail.com" className="text-indigo-600 hover:underline">
+                cabuyacreativa@gmail.com
+              </a>
             </p>
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-gray-900 mb-3">2. Descripción del Servicio</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-3">2. Aceptación de los Términos</h2>
+            <p>
+              Al crear una cuenta o usar los servicios de BuenTurno Resume ("el Servicio"), operado por CabuyaCreativa.com con sede en Puerto Rico, usted acepta estos Términos y Condiciones en su totalidad. Si no está de acuerdo, no use el Servicio.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-semibold text-gray-900 mb-3">3. Descripción del Servicio</h2>
             <p>
               BuenTurno Resume es una plataforma gratuita que permite a candidatos (talentos) crear un resume profesional de una sola página al estilo BuenTurno — que incluye disponibilidad por día y hora — y conectarse con patronos (empleadores) que buscan candidatos con su perfil.
             </p>
@@ -55,7 +70,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-gray-900 mb-3">3. Cómo Usamos Tu Información (y Por Qué es un Beneficio)</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-3">4. Cómo Usamos Tu Información (y Por Qué es un Beneficio)</h2>
             <p>
               Al crear un perfil público en BuenTurno Resume, autorizas que tu información profesional (nombre, municipio, habilidades, disponibilidad, expectativa salarial y experiencia) sea visible para patronos registrados en la plataforma que están buscando candidatos con tu perfil.
             </p>
@@ -68,7 +83,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-gray-900 mb-3">4. Privacidad y Datos Personales</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-3">5. Privacidad y Datos Personales</h2>
             <ul className="list-disc pl-5 space-y-2">
               <li>Tu información <strong>no se vende</strong> a terceros fuera de la plataforma.</li>
               <li>Solo patronos registrados y verificados en BuenTurno pueden ver tu perfil.</li>
@@ -79,7 +94,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-gray-900 mb-3">5. Modelo de Negocio y Anuncios</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-3">6. Modelo de Negocio y Anuncios</h2>
             <p>
               BuenTurno Resume es gratuito para candidatos. El servicio se financia mediante:
             </p>
@@ -90,7 +105,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-gray-900 mb-3">6. Responsabilidades del Usuario</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-3">7. Responsabilidades del Usuario</h2>
             <ul className="list-disc pl-5 space-y-2">
               <li>Proporcionar información veraz y actualizada en tu resume.</li>
               <li>No usar el Servicio para fines fraudulentos o ilegales.</li>
@@ -100,37 +115,35 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-gray-900 mb-3">7. Limitación de Responsabilidad</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-3">8. Limitación de Responsabilidad</h2>
             <p>
               BuenTurno Resume actúa como intermediario entre candidatos y patronos. No garantizamos que el uso del Servicio resultará en empleo. Las interacciones entre candidatos y patronos son responsabilidad de las partes involucradas.
             </p>
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-gray-900 mb-3">8. Modificaciones</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-3">9. Modificaciones</h2>
             <p>
               Nos reservamos el derecho de modificar estos Términos. Te notificaremos por correo electrónico si realizamos cambios materiales. El uso continuado del Servicio después de dichos cambios constituye aceptación.
             </p>
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-gray-900 mb-3">9. Ley Aplicable</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-3">10. Ley Aplicable</h2>
             <p>
               Estos Términos se rigen por las leyes del Estado Libre Asociado de Puerto Rico y las leyes federales de los Estados Unidos aplicables.
             </p>
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-gray-900 mb-3">10. Contacto</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-3">11. Contacto</h2>
             <p>
-              Para preguntas sobre estos Términos, comunícate con nosotros en{" "}
-              <a href="mailto:legal@buenturno.com" className="text-indigo-600 hover:underline">
-                legal@buenturno.com
-              </a>{" "}
-              o en{" "}
-              <a href="mailto:contacto@buenturno.com" className="text-indigo-600 hover:underline">
-                contacto@buenturno.com
-              </a>.
+              BuenTurno Resume es un proyecto de{" "}
+              <a href="https://cabuyacreativa.com" target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">CabuyaCreativa.com</a>.
+              Para preguntas sobre estos Términos o sobre el servicio, escríbenos a:{" "}
+              <a href="mailto:cabuyacreativa@gmail.com" className="text-indigo-600 hover:underline">
+                cabuyacreativa@gmail.com
+              </a>
             </p>
           </section>
         </div>
