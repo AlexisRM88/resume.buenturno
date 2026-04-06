@@ -36,9 +36,9 @@ export default function LandingPage() {
           </span>
 
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-gray-900 leading-[1.1] mb-6">
-            Crea tu Resume{" "}
-            <span className="text-indigo-600">Estilo BuenTurno</span>{" "}
-            y conecta con patronos que buscan tu talento
+            Crea tu Resume Profesional y conecta con{" "}
+            <span className="text-indigo-600">patronos que buscan tu talento</span>{" "}
+            en Puerto Rico
           </h1>
 
           <p className="text-lg sm:text-xl text-gray-600 mb-4 max-w-xl mx-auto leading-relaxed">
@@ -83,15 +83,15 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── QUÉ ES EL ESTILO BUENTURNO ── */}
+      {/* ── QUÉ TIENE EL RESUME BUENTURNO ── */}
       <section className="px-6 py-16 bg-white">
         <div className="max-w-4xl mx-auto">
-          <p className="text-xs font-bold text-indigo-500 uppercase tracking-widest text-center mb-3">Exclusivo</p>
+          <p className="text-xs font-bold text-indigo-500 uppercase tracking-widest text-center mb-3">El formato</p>
           <h2 className="text-3xl font-black text-gray-900 text-center mb-4">
-            ¿Qué es el estilo BuenTurno?
+            ¿Qué tiene el Resume BuenTurno?
           </h2>
           <p className="text-center text-gray-500 mb-10 max-w-xl mx-auto">
-            Un formato único de resume de una sola página que los patronos en Puerto Rico adoran.
+            Más que un resume bonito — un formato inteligente diseñado para conectar candidatos reales con patronos de Puerto Rico.
           </p>
           <div className="grid sm:grid-cols-3 gap-6">
             {[
@@ -237,7 +237,7 @@ export default function LandingPage() {
                 Encuentra candidatos calificados en Puerto Rico
               </h2>
               <p className="text-indigo-100 leading-relaxed mb-6">
-                Busca candidatos por <strong className="text-white">pueblo, zona geográfica, disponibilidad y expectativa salarial</strong>. Accede a un banco de talentos activos con resume estilo BuenTurno.
+                Busca candidatos por <strong className="text-white">pueblo, zona geográfica, disponibilidad y expectativa salarial</strong>. Accede a un banco de talentos activos con Resume BuenTurno.
               </p>
               <ul className="space-y-3 text-sm text-indigo-100">
                 {[
@@ -296,7 +296,7 @@ export default function LandingPage() {
             Empieza en segundos — siempre gratis
           </h2>
           <p className="text-gray-500 mb-8">
-            Crea tu resume estilo BuenTurno y aparece en búsquedas de patronos que buscan tu talento en Puerto Rico.
+            Crea tu resume profesional y aparece en búsquedas de patronos que buscan tu talento en Puerto Rico.
           </p>
           <Link
             href="/dashboard"
