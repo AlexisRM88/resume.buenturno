@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { CTALink } from "@/components/CTALink";
+import { AdBanner } from "@/components/AdBanner";
 
 export default function LandingPage() {
   return (
@@ -52,18 +54,20 @@ export default function LandingPage() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link
+            <CTALink
               href="/dashboard"
+              label="hero_crear_resume"
               className="inline-block bg-indigo-600 text-white px-8 py-4 rounded-2xl text-lg font-black hover:bg-indigo-700 transition shadow-xl shadow-indigo-200"
             >
               Crear mi resume gratis →
-            </Link>
-            <Link
+            </CTALink>
+            <CTALink
               href="/employers"
+              label="hero_soy_patrono"
               className="inline-block bg-white text-indigo-700 border-2 border-indigo-200 px-8 py-4 rounded-2xl text-lg font-bold hover:border-indigo-400 transition"
             >
               Soy patrono
-            </Link>
+            </CTALink>
           </div>
 
           {/* Stats */}
@@ -159,21 +163,21 @@ export default function LandingPage() {
           </div>
 
           <div className="text-center mt-12">
-            <Link
+            <CTALink
               href="/dashboard"
+              label="como_funciona_empezar"
               className="inline-block bg-indigo-600 text-white px-8 py-4 rounded-2xl font-bold hover:bg-indigo-700 transition"
             >
               Empezar ahora — gratis →
-            </Link>
+            </CTALink>
           </div>
         </div>
       </section>
 
-      {/* ── AD PLACEHOLDER ── */}
-      <div className="bg-gray-100 border-y border-gray-200 py-4 px-6 flex items-center justify-center">
-        <div className="max-w-4xl w-full h-20 flex items-center justify-center text-xs text-gray-400 border border-dashed border-gray-300 rounded-xl bg-white">
-          {/* Google AdSense — instalar banner aquí */}
-          Publicidad
+      {/* ── AD BANNER ── */}
+      <div className="border-y border-gray-200 py-2 px-6">
+        <div className="max-w-4xl mx-auto">
+          <AdBanner slot="1234567890" format="horizontal" />
         </div>
       </div>
 
@@ -298,12 +302,13 @@ export default function LandingPage() {
           <p className="text-gray-500 mb-8">
             Crea tu resume profesional y aparece en búsquedas de patronos que buscan tu talento en Puerto Rico.
           </p>
-          <Link
+          <CTALink
             href="/dashboard"
+            label="cta_final_crear_resume"
             className="inline-block bg-indigo-600 text-white px-10 py-4 rounded-2xl text-lg font-black hover:bg-indigo-700 transition shadow-xl shadow-indigo-200"
           >
             Crear mi resume gratis →
-          </Link>
+          </CTALink>
           <p className="text-xs text-gray-400 mt-4">Sin tarjeta de crédito · Sin contratos</p>
         </div>
       </section>

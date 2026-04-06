@@ -3,6 +3,7 @@
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { trackRoleSelected, trackEmailSubmit, trackLoginSuccess } from "@/lib/analytics";
 
 type Role = "talent" | "employer";
 
@@ -18,6 +19,7 @@ export default function SignInPage() {
   function handleRoleSelect(selected: Role) {
     setRole(selected);
     setStep("email");
+    trackRoleSelected(selected);
   }
 
   async function handleEmailSubmit(e: React.FormEvent) {
@@ -27,6 +29,7 @@ export default function SignInPage() {
     try {
       await signIn("resend", { email });
       setStep("code");
+      trackEmailSubmit(role!);
     } catch {
       setError("Error al enviar el código. Verifica el email.");
     } finally {
@@ -42,6 +45,7 @@ export default function SignInPage() {
     setError("");
     try {
       await signIn("resend", { email, code });
+      trackLoginSuccess(role!);
       router.push(role === "employer" ? "/employers" : "/dashboard");
     } catch {
       setError("Código incorrecto. Intenta de nuevo.");

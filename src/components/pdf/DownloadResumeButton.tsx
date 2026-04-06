@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import { ResumeData } from "@/lib/resume-types";
 import { ResumeDocument } from "./ResumeDocument";
+import { trackPdfDownload } from "@/lib/analytics";
 
 // PDFDownloadLink solo funciona en el cliente
 const PDFDownloadLink = dynamic(
@@ -23,6 +24,7 @@ export function DownloadResumeButton({ data, experiences, className }: Props) {
     <PDFDownloadLink
       document={<ResumeDocument data={data} experiences={experiences} />}
       fileName={fileName}
+      onClick={() => trackPdfDownload(data.template)}
     >
       {({ loading, error }) => (
         <button

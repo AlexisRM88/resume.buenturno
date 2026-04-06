@@ -12,6 +12,9 @@ const geistSans = Geist({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://resume.buenturno.com"),
+  verification: {
+    google: "google-site-verification", // reemplazar con el token de Search Console
+  },
   title: {
     default: "Resume Gratis Puerto Rico | BuenTurno Resume",
     template: "%s | BuenTurno Resume",
@@ -110,7 +113,21 @@ export default function RootLayout({
             type="application/ld+json"
             dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
           />
-          {/* Google AdSense — reemplazar ca-pub-8427212204766807 con tu Publisher ID */}
+          {/* Google Analytics 4 */}
+          <Script
+            async
+            src="https://www.googletagmanager.com/gtag/js?id=G-DMRWKNGTVJ"
+            strategy="afterInteractive"
+          />
+          <Script id="ga4-init" strategy="afterInteractive">
+            {`
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-DMRWKNGTVJ', { send_page_view: true });
+            `}
+          </Script>
+          {/* Google AdSense */}
           <Script
             async
             src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8427212204766807"

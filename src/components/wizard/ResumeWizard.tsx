@@ -9,6 +9,7 @@ import { Step2Skills } from "./Step2Skills";
 import { Step3Experience } from "./Step3Experience";
 import { Step4Availability } from "./Step4Availability";
 import { Step5Style } from "./Step5Style";
+import { trackWizardStep, trackWizardNext, trackResumeSaved } from "@/lib/analytics";
 
 const STEPS = [
   { label: "Contacto", short: "1" },
@@ -84,6 +85,11 @@ export function ResumeWizard() {
     }));
   }, [existingExperiences, data.experiences.length]);
 
+  // Track step views
+  useEffect(() => {
+    trackWizardStep(currentStep, STEPS[currentStep].label);
+  }, [currentStep]);
+
   function handleChange(updates: Partial<ResumeData>) {
     setData((prev) => ({ ...prev, ...updates }));
     setSaved(false);
@@ -135,6 +141,7 @@ export function ResumeWizard() {
       }
 
       setSaved(true);
+      trackResumeSaved(data.template, data.locality);
     } catch (err) {
       console.error(err);
     } finally {
@@ -143,6 +150,7 @@ export function ResumeWizard() {
   }
 
   async function handleNext() {
+    trackWizardNext(currentStep, STEPS[currentStep].label);
     if (currentStep === STEPS.length - 1) {
       await handleSave();
     } else {
