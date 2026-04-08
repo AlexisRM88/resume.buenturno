@@ -61,6 +61,7 @@ export default function SignInPage() {
       router.push(role === "employer" ? "/employers" : "/dashboard");
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
+      console.error("[auth error]", msg);
       if (msg.includes("InvalidAccountId") || msg.includes("AccountNotFound") || msg.includes("not found")) {
         setError(
           authMode === "login"
@@ -71,7 +72,7 @@ export default function SignInPage() {
         setError("Ya existe una cuenta con ese email. Inicia sesión.");
         setAuthMode("login");
       } else {
-        setError(process.env.NODE_ENV === "development" ? msg : "Ocurrió un error. Intenta de nuevo.");
+        setError(msg || "Ocurrió un error. Intenta de nuevo.");
       }
     } finally {
       setLoading(false);
